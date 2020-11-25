@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace TimeTracker.Models
@@ -10,7 +11,8 @@ namespace TimeTracker.Models
         [Required]
         public long Duration { get; set; }
 
-        public TimeSpan TimeSpanDuration => new TimeSpan(Duration);
+        [ReadOnly(true)]
+        public TimeSpan TimeSpanDuration => new TimeSpan(Duration*1000);
 
         [Required]
         public string Description { get; set; }

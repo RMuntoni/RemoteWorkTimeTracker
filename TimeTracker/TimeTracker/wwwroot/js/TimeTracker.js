@@ -1,4 +1,5 @@
-﻿//Define variables
+﻿//Todo: Refactor this to typescript. Use a common error or logging function
+//Define variables
 let toggleTimerButton = null;
 let resetTimerButton = null;
 let saveTimerButton = null;
@@ -54,8 +55,21 @@ let saveTimerClickFunction = function (event) {
         return;
     }
 
+    //Todo: should maybe not know the other fields.
+    durationInput.value = timeSpan;
+    let date = new Date();
+    finishDateInput.value = date.toISOString().substring(0, 10);
+    
+    let promise = new Promise(function (resolve, reject) {        
+        let result = saveTaskFormFunction();
 
+        if (result)
+            resolve();
+        else
+            reject();
+    }).then(resetTimerClickFunction, function () { console.log("error during save") });
 
+    return promise;
 }
 
 let timerIntervalFunction = function () {

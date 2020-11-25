@@ -1,4 +1,5 @@
-﻿//Define variables
+﻿//Todo: Refactor this to typescript. Use a common error or logging function
+//Define variables
 let saveTaskForm = null;
 let saveTaskFormButton = null;
 let durationUserInput = null;
@@ -57,18 +58,22 @@ let convertUserInputToTimeSpan = function () {
 let saveTaskFormFunction = function () {
     event.preventDefault();
 
-    if (!saveTaskForm)
+    if (!saveTaskForm) {
         console.log("saveTaskForm not set");
+        return false;
+    }
+        
 
     if (!errorSpan)
         errorSpan.innerText = "";
 
     if (!validate()) {
         console.log("Fehler bei der Validierung")
-        return;
+        return false;
     }
         
     saveTaskForm.submit();
+    return true;
 }
 
 //register functionality to buttons and elements
