@@ -1,0 +1,76 @@
+﻿@model TaskList
+@{
+    ViewData["Title"] = "Time Tracker";
+}
+
+<div class="text-center">
+    <h1>@ViewData["Title"]</h1>
+    <div>
+        <h2 id="timer">00:00:00</h2>
+        <button type="button" id="toggleTimerButton">Start</button>
+        <button type="button" id="resetTimerButton">Reset</button>
+        <button type="button" id="saveTimerButton">Als Task speichern</button>
+    </div>
+    @using (Html.BeginForm("SaveTask", "Home", FormMethod.Post, new { id = "saveTaskForm" }))
+    {
+        <div class="taskForm">
+            <div class="inputContainer">
+                <label for="finishDate">Task-Datum </label>
+                <input type="Date" id="finishDate" name="finishDate" value="@DateTime.Now" />
+            </div>
+            <div class="inputContainer">
+                <label for="durationUser">Dauer <i>hh:mm:ss</i></label>
+                <input type="text" id="durationUser" name="durationUser" value="00:00:00" />
+                <input type="hidden" id="duration" name="duration" value="" />
+            </div>
+            <div class="inputContainer">
+                <label for="description">Beschreibung </label>
+                @Html.TextArea("description")
+            </div>
+            <button type="button" id="saveTaskFormButton">Speichern</button>
+            <span id="errorSpan"></span>
+        </div>
+    }
+    <div>
+        <ul>
+            @foreach (var task in Model.Skip(Model.CurrentPage * Model.ItemsPerPage).Take(Model.ItemsPerPage))
+            {
+                <li>
+                    <p>
+                        <b>Abgeschlossen am:</b> @task.FinishDate.ToString("d") <b>Dauer:</b> @task.TimeSpanDuration.ToString("c")
+                    </p>
+                    <p><b>Beschreibung:</b><i>@task.Description</i></p>
+                </li>
+            }
+        </ul>
+        <div class="pager">
+
+            @if (Model.HasPrevPage)
+                @Html.ActionLink("vorherige Seite", "ChangePage", "Home", new { newPage = Model.CurrentPage - 1, filter = ViewBag.Filter })
+            @if (Model.HasNextPage)
+                @Html.ActionLink("nächste Seite", "ChangePage", "Home", new { newPage = Model.CurrentPage + 1, filter = ViewBag.Filter })
+            <span>Seite @(Model.CurrentPage+1) von @Model.NumberOfPages</span>
+            @using (Html.BeginForm("FilterTaskList", "Home", FormMethod.Post, new { id = "filterForm" }))
+            {
+                <input type="text" id="filter" name="filter" value="@ViewBag.Filter" placeholder="Filter..." onchange="document.getElementById('filterForm').submit();" />
+            }
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript" src="~/js/TimeTracker.es5.min.js"></script>
+    <script type="text/javascript" src="~/js/TaskForm.js"></script>
+    
+    <script type="text/javascript">
+        //On document ready register funtions
+        document.onreadystatechange = function () {
+            if (document.readyState == "interactive") {
+                initTaskForm();
+                initTimeTracker();
+            }
+        }
+    </script>
+
+}
